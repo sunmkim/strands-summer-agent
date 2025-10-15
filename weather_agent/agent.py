@@ -2,6 +2,7 @@ import os
 from strands import Agent
 from strands.models.litellm import LiteLLMModel
 from tools import get_aqi, get_current_weather
+from prompts import SYSTEM_PROMPT
 
 # create a liteLLM model for OpenAI's gpt-5-nano
 model = LiteLLMModel(
@@ -14,7 +15,7 @@ model = LiteLLMModel(
 # Create an agent with default settings
 agent = Agent(
     model=model,
-    system_prompt=system_prompt,
+    system_prompt=SYSTEM_PROMPT,
     tools=[get_aqi, get_current_weather]
 )
 
