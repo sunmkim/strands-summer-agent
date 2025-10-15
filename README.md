@@ -4,7 +4,7 @@
 
 To create a production-ready chatbot that gives information about inclement summer weather and climate/atmospheric conditions, and gives tips on how to exercise caution when you are outside during the day.
 
-You can consider this a production-grade update using Strands to the previous [Summer Chatbot](https://github.com/sunmkim/summer-days) project that was built with LangGraph, which was more akin to a proof-of-concept.
+You can consider this a production-grade update to the previous [Summer Chatbot](https://github.com/sunmkim/summer-days) project using Strands. The previous version was built with LangGraph, and was more akin to a proof-of-concept.
 
 ## Technologies Used
 
