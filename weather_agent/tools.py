@@ -1,7 +1,7 @@
 import os
 import requests
 from typing import Optional, Tuple, List, Dict, Union
-from strands import Agent, tool
+from strands import tool
 
 BASE_OPENWEATHER_URL = "http://api.openweathermap.org"
 
