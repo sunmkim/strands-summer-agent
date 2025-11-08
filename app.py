@@ -160,12 +160,6 @@ def main():
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # Display chat messages
-    for message in st.session_state.messages:
-        with st.spinner("AI is thinking..."): 
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-
     # Chat input
     if prompt := st.chat_input("Type your message here..."):
        
@@ -180,50 +174,49 @@ def main():
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             chunk_buffer = ""
-
-            try:
-                # Stream the response
-                for chunk in invoke_agent_streaming(
-                    prompt,
-                ):
-                    # Let's see what we get
-                    logger.debug(f"MAIN LOOP: chunk type: {type(chunk)}")
-                    logger.debug(f"MAIN LOOP: chunk content: {chunk}")
-
-                    # Ensure chunk is a string before concatenating
-                    if not isinstance(chunk, str):
-                        logger.info(
-                            f"MAIN LOOP: Converting non-string chunk to string"
-                        )
-                        chunk = str(chunk)
-
-                    # Add chunk to buffer
-                    chunk_buffer += chunk
-
-                    # Only update display every few chunks or when we hit certain characters
-                    if (
-                        len(chunk_buffer) % 3 == 0
-                        or chunk.endswith(" ")
-                        or chunk.endswith("\n")
+            with st.spinner("AI is thinking..."): 
+                try:
+                    # Stream the response
+                    for chunk in invoke_agent_streaming(
+                        prompt,
                     ):
+                        # Let's see what we get
+                        logger.debug(f"MAIN LOOP: chunk type: {type(chunk)}")
+                        logger.debug(f"MAIN LOOP: chunk content: {chunk}")
+
+                        # Ensure chunk is a string before concatenating
+                        if not isinstance(chunk, str):
+                            logger.info(
+                                f"MAIN LOOP: Converting non-string chunk to string"
+                            )
+                            chunk = str(chunk)
+
+                        # Add chunk to buffer
+                        chunk_buffer += chunk
+
+                        # Only update display every few chunks or when we hit certain characters
+                        if (
+                            len(chunk_buffer) % 3 == 0
+                            or chunk.endswith(" ")
+                            or chunk.endswith("\n")
+                        ):
+                            
+                            # Clean the accumulated response
+                            cleaned_response = clean_response_text(chunk_buffer)
+                            message_placeholder.markdown(cleaned_response + " ▌")
                         
-                        # Clean the accumulated response
-                        cleaned_response = clean_response_text(chunk_buffer)
-                        message_placeholder.markdown(cleaned_response + " ▌")
-                      
 
-                    time.sleep(0.01)  # Reduced delay since we're batching updates
+                        time.sleep(0.01)  # Reduced delay since we're batching updates
 
-                # Final response without cursor
-                full_response = clean_response_text(chunk_buffer, True)
-    
+                    # Final response without cursor
+                    full_response = clean_response_text(chunk_buffer, True)
+        
+                    message_placeholder.markdown(full_response)
 
-                message_placeholder.markdown(full_response)
-
-            except Exception as e:
-                error_msg = f"❌ **Error:** {str(e)}"
-                message_placeholder.markdown(error_msg)
-                full_response = error_msg
+                except Exception as e:
+                    error_msg = f"❌ **Error:** {str(e)}"
+                    message_placeholder.markdown(error_msg)
+                    full_response = error_msg
 
         # Add assistant response to chat history
         st.session_state.messages.append(
