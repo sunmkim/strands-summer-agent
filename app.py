@@ -22,22 +22,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Remove Streamlit deployment components
-st.markdown(
-    """
-      <style>
-        .stAppDeployButton {display:none;}
-        #MainMenu {visibility: hidden;}
-      </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# HUMAN_AVATAR = "static/user-profile.svg"
-# AI_AVATAR = "static/gen-ai-dark.svg"
-
-
-
 
 
 def clean_response_text(text: str, show_thinking: bool = True) -> str:
@@ -178,8 +162,9 @@ def main():
 
     # Display chat messages
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        with st.spinner("AI is thinking..."): 
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
 
     # Chat input
     if prompt := st.chat_input("Type your message here..."):

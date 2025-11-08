@@ -1,13 +1,19 @@
 import os
 from typing import Tuple, List, Dict
+from dotenv import load_dotenv
 from strands import Agent
 from strands.models.litellm import LiteLLMModel
-from dotenv import load_dotenv
+from MemoryHook import MemoryHook
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+from memory_utils import create_memory_resource, create_memory_session
 from tools import get_aqi, get_current_weather
 from prompts import SYSTEM_PROMPT
 
 load_dotenv()
+
+# set ids for memory
+ACTOR_ID = "user_1" # can be any unique identifier
+SESSION_ID = "session_1" 
 
 # initialize runtime app
 app = BedrockAgentCoreApp()
@@ -26,10 +32,21 @@ async def invoke_strands_agent(payload: Dict):
     Invoke our strands agent with a payload (prompt)
     """
 
+    # create memory manager and user session
+    memory = create_memory_resource(
+        memory_name="summer_agent_memory"
+    )
+    user_session = create_memory_session(
+        actor_id=ACTOR_ID,
+        session_id=SESSION_ID,
+        memory_id=memory.id
+    )
+
     # Create an agent with default settings
     agent = Agent(
         model=model,
         system_prompt=SYSTEM_PROMPT,
+        hooks=[MemoryHook(ACTOR_ID, SESSION_ID, user_session)],
         tools=[get_aqi, get_current_weather]
     )
     
@@ -41,7 +58,6 @@ async def invoke_strands_agent(payload: Dict):
 
     try: 
         async for event in agent.stream_async(usr_input):
-            print(event)
             if (
                 "current_tool_use" in event
                 and event["current_tool_use"].get("name") != tool_name

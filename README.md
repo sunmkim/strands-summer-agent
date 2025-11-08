@@ -31,5 +31,9 @@ You should see a response that looks like:
 **Locally with Streamlit**
 Run `uv run weather_agent/agent.py`. Then run the following command in the root folder of this project: 
 ```
-streamlit run app.py
+uv run streamlit run app.py
 ```
+
+The Streamlit UI in `app.py` is a modified version of an AWS example from [here](https://github.com/awslabs/amazon-bedrock-agentcore-samples/blob/main/03-integrations/ux-examples/streamlit-chat/app.py). (Unfortunately, UI is not my strong suit)
+
+We need to create agent memory before running the script. (Use terraform)
