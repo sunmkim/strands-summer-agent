@@ -56,6 +56,7 @@ async def invoke_strands_agent(payload: Dict):
     tool_name = None
     # session_id = context.session_id
 
+    # async streaming of the LLM response
     try: 
         async for event in agent.stream_async(usr_input):
             if (
