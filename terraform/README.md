@@ -8,5 +8,6 @@ Run the following commands:
 ```
 ?> terraform init
 ?> terraform validate
+?> terraform plan
 ?> terraform apply
 ```

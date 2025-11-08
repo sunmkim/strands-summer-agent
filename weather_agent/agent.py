@@ -14,6 +14,7 @@ load_dotenv()
 # set ids for memory
 ACTOR_ID = "user_1" # can be any unique identifier
 SESSION_ID = "session_1" 
+MEMORY_NAME = "weather_bot_memory"
 
 # initialize runtime app
 app = BedrockAgentCoreApp()
@@ -34,7 +35,7 @@ async def invoke_strands_agent(payload: Dict):
 
     # create memory manager and user session
     memory = create_memory_resource(
-        memory_name="summer_agent_memory"
+        memory_name=MEMORY_NAME
     )
     user_session = create_memory_session(
         actor_id=ACTOR_ID,
