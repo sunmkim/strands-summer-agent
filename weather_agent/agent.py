@@ -47,15 +47,14 @@ async def invoke_strands_agent(payload: Dict):
     agent = Agent(
         model=model,
         system_prompt=SYSTEM_PROMPT,
+        tools=[get_aqi, get_current_weather],
         hooks=[MemoryHook(ACTOR_ID, SESSION_ID, user_session)],
-        tools=[get_aqi, get_current_weather]
     )
     
     usr_input = payload.get("prompt")
     print(f"User query: '{usr_input}'")
 
     tool_name = None
-    # session_id = context.session_id
 
     # async streaming of the LLM response
     try: 

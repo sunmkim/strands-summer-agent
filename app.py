@@ -107,9 +107,6 @@ def extract_text_from_response(data) -> str:
 
 def parse_streaming_chunk(chunk: str) -> str:
     """Parse individual streaming chunk and extract meaningful content"""
-    # logger.info(f"parse_streaming_chunk: received chunk: {chunk}")
-    # logger.info(f"parse_streaming_chunk: chunk type: {type(chunk)}")
-
     try:        
         # return chunk as-is
         # logger.info("parse_streaming_chunk: Not JSON, returning as-is")
@@ -118,28 +115,52 @@ def parse_streaming_chunk(chunk: str) -> str:
         logger.error(f"parse_streaming_chunk: JSON decode error: {e}")
         raise e
 
+
+def get_agent_runtimes(region: str = "us-east-1") -> List[Dict]:
+    """Fetch available agent runtimes from bedrock-agentcore-control"""
+    try:
+        client = boto3.client("bedrock-agentcore-control", region_name=region)
+        response = client.list_agent_runtimes(maxResults=10)
+
+        # Filter only READY agents and sort by name
+        ready_agents = [
+            agent
+            for agent in response.get("agentRuntimes", [])
+            if agent.get("status") == "READY"
+        ]
+
+        # Sort by most recent update time (newest first)
+        ready_agents.sort(key=lambda x: x.get("lastUpdatedAt", ""), reverse=True)
+
+        return ready_agents
+    except Exception as e:
+        st.error(f"Error fetching agent runtimes: {e}")
+        return []
+
 def invoke_agent_streaming(
     prompt: str,
+    agent_arn: str,
     show_tool: bool = True,
+    region: str = "us-east-1"
 ) -> Iterator[str]:
     """Invoke agent and yield streaming response chunks"""
     try:
+        agentcore_client = boto3.client("bedrock-agentcore", region_name=region)
+
         logger.info("Using streaming response path")
-        header = {
-            "Content-Type": "application/json"
-        }
-        body = {
-            "prompt": prompt
-        }
-        response = requests.post(url=URL, json=body, headers=header, stream=True)
-        # Handle streaming response
-        for line in response.iter_lines(chunk_size=1):
+
+        # invoke agent hosted on AWS
+        response = agentcore_client.invoke_agent_runtime(
+            agentRuntimeArn=agent_arn,
+            payload=json.dumps({"prompt": prompt}),
+        )
+
+        for line in response["response"].iter_lines(chunk_size=1):
             if line:
                 line = line.decode("utf-8")
                 # logger.info(f"Raw line: {line}")
                 if line.startswith("data: "):
                     line = line[6:]
-                    # logger.info(f"Line after removing 'data: ': {line}")
                     # Parse and clean each chunk
                     parsed_chunk = parse_streaming_chunk(line)
                     logger.info(f"parsed_chunk:: {parsed_chunk}")
@@ -155,6 +176,11 @@ def invoke_agent_streaming(
 
 def main():
     st.title("Weather Chat")
+
+
+    # get available agent runtimes
+    available_agents = get_agent_runtimes()
+    runtime_arn = available_agents[0]['agentRuntimeArn']
 
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -179,6 +205,7 @@ def main():
                     # Stream the response
                     for chunk in invoke_agent_streaming(
                         prompt,
+                        runtime_arn
                     ):
                         # Let's see what we get
                         logger.debug(f"MAIN LOOP: chunk type: {type(chunk)}")

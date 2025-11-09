@@ -4,3 +4,6 @@
 .DS_Store
 **/.terraform
 **/.terraform.*
+**/.dockerignore
+**/.bedrock_agentcore
+*.tfstate.backup
