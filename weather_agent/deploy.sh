@@ -7,3 +7,6 @@ uv run agentcore status
 
 # test deployment
 uv run agentcore invoke '{"prompt": "Hello. What do you do?"}'
+
+# to cleanup, run below command:
+# agentcore destroy

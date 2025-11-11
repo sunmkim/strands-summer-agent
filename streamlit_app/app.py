@@ -1,6 +1,5 @@
 import json
 import re
-import requests
 import time
 import uuid
 from typing import Dict, Iterator, List
@@ -12,7 +11,6 @@ from streamlit.logger import get_logger
 logger = get_logger(__name__)
 logger.setLevel("INFO")
 
-URL = "http://localhost:8080/invocations"
 
 # Page config
 st.set_page_config(

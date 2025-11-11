@@ -7,3 +7,4 @@
 **/.dockerignore
 **/.bedrock_agentcore
 *.tfstate.backup
+*.zip
