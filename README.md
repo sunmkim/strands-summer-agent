@@ -2,6 +2,10 @@
 
 **Deployed app** available at: https://summer-weather-smk1.streamlit.app
 
+Ask the chatbot any question about a city's weather or air quality! About any city in the world 🌏. See example below:
+
+![Chat Image](static/ai_finished_thinking.png)
+
 **Goal:**
 
 To create a production-ready chatbot that gives information about inclement summer weather and climate/atmospheric conditions, and gives tips on how to exercise caution when you are outside during the day.

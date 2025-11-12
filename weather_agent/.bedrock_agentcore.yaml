@@ -8,7 +8,7 @@ agents:
     source_path: /Users/sunkim/Developer/strands-summer-agent/weather_agent
     aws:
       execution_role: arn:aws:iam::794944452292:role/AmazonBedrockAgentCoreSDKRuntime-us-east-1-0bee995bb6
-      execution_role_auto_create: false
+      execution_role_auto_create: true
       account: '794944452292'
       region: us-east-1
       ecr_repository: 794944452292.dkr.ecr.us-east-1.amazonaws.com/bedrock-agentcore-weather_bot
@@ -23,18 +23,18 @@ agents:
     bedrock_agentcore:
       agent_id: weather_bot-DaOxPy9SMM
       agent_arn: arn:aws:bedrock-agentcore:us-east-1:794944452292:runtime/weather_bot-DaOxPy9SMM
-      agent_session_id: 83e0d02c-6cd5-437a-8ae6-d9b4640b4c01
+      agent_session_id: null
     codebuild:
       project_name: bedrock-agentcore-weather_bot-builder
       execution_role: arn:aws:iam::794944452292:role/AmazonBedrockAgentCoreSDKCodeBuild-us-east-1-0bee995bb6
       source_bucket: bedrock-agentcore-codebuild-sources-794944452292-us-east-1
     memory:
-      mode: STM_ONLY
+      mode: STM_AND_LTM
       memory_id: weather_bot_memory-ECNuNm4B0d
-      memory_arn: arn:aws:bedrock-agentcore:us-east-1:794944452292:memory/weather_bot_memory-ECNuNm4B0d
-      memory_name: weather_bot_mem
+      memory_arn: null
+      memory_name: weather_bot_memory
       event_expiry_days: 30
-      first_invoke_memory_check_done: true
+      first_invoke_memory_check_done: false
       was_created_by_toolkit: false
     authorizer_configuration: null
     request_header_configuration: null
