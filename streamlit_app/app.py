@@ -1,7 +1,6 @@
 import json
 import re
 import time
-import uuid
 from typing import Dict, Iterator, List
 
 import boto3
