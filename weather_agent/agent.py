@@ -64,7 +64,7 @@ async def invoke_strands_agent(payload: Dict):
                 and event["current_tool_use"].get("name") != tool_name
             ):
                 tool_name = event["current_tool_use"]["name"]
-                yield f"*Using tool: {tool_name}* \n\n"
+                yield f"Used tool: {tool_name}"
 
             if "data" in event:
                 yield event["data"]

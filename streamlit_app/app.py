@@ -137,7 +137,6 @@ def get_agent_runtimes(region: str = "us-east-1") -> List[Dict]:
 def invoke_agent_streaming(
     prompt: str,
     agent_arn: str,
-    show_tool: bool = True,
     region: str = "us-east-1"
 ) -> Iterator[str]:
     """Invoke agent and yield streaming response chunks"""
@@ -160,8 +159,12 @@ def invoke_agent_streaming(
                     line = line[6:]
                     # Parse and clean each chunk
                     parsed_chunk = parse_streaming_chunk(line)
-                    logger.info(f"parsed_chunk:: {parsed_chunk}")
-                    if parsed_chunk.strip():  # Only yield non-empty chunks
+                    if "Used tool" in parsed_chunk:
+                        stripped_str = parsed_chunk.strip()
+                        cleaned_str = stripped_str.replace('"', '')
+                        st.write(f"{cleaned_str}")
+                    elif parsed_chunk.strip():  # Only yield non-empty chunks
+                        logger.info(f"parsed_chunk:: {parsed_chunk}")
                         yield parsed_chunk
                 else:
                     logger.info(
@@ -173,7 +176,6 @@ def invoke_agent_streaming(
 
 def main():
     st.title("Weather Chat")
-
 
     # get available agent runtimes
     available_agents = get_agent_runtimes()
@@ -197,7 +199,7 @@ def main():
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             chunk_buffer = ""
-            with st.spinner("AI is thinking..."): 
+            with st.status("AI is thinking...", expanded=True) as status: 
                 try:
                     # Stream the response
                     for chunk in invoke_agent_streaming(
@@ -224,12 +226,10 @@ def main():
                             or chunk.endswith(" ")
                             or chunk.endswith("\n")
                         ):
-                            
                             # Clean the accumulated response
                             cleaned_response = clean_response_text(chunk_buffer)
                             message_placeholder.markdown(cleaned_response + " ▌")
                         
-
                         time.sleep(0.01)  # Reduced delay since we're batching updates
 
                     # Final response without cursor
@@ -241,7 +241,9 @@ def main():
                     error_msg = f"❌ **Error:** {str(e)}"
                     message_placeholder.markdown(error_msg)
                     full_response = error_msg
-
+                status.update(
+                    label="AI completed task!", state="complete", expanded=False
+                )
         # Add assistant response to chat history
         st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
