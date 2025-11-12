@@ -1,5 +1,7 @@
 # Summer Chatbot with Strands Agents
 
+**Deployed app** available at: https://summer-weather-smk1.streamlit.app
+
 **Goal:**
 
 To create a production-ready chatbot that gives information about inclement summer weather and climate/atmospheric conditions, and gives tips on how to exercise caution when you are outside during the day.
