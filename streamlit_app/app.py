@@ -179,6 +179,10 @@ def main():
 
     # get available agent runtimes
     available_agents = get_agent_runtimes()
+    for i,agent in enumerate(available_agents):
+        if "weather_bot" in agent["agentRuntimeId"]:
+            runtime_arn = available_agents[i]['agentRuntimeArn']
+            break
     runtime_arn = available_agents[0]['agentRuntimeArn']
 
     # Initialize chat history
