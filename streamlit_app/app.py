@@ -180,6 +180,7 @@ def main():
     # get available agent runtimes
     available_agents = get_agent_runtimes()
     for i,agent in enumerate(available_agents):
+        print(f"Available agent: {agent}")
         if "weather_bot" in agent["agentRuntimeId"]:
             runtime_arn = available_agents[i]['agentRuntimeArn']
             break
